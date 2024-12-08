@@ -7,10 +7,10 @@ import { StoreContextProvider } from "./Context/StoreContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <StoreContextProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <StoreContextProvider>
         <App />
-      </BrowserRouter>
-    </StoreContextProvider>
+      </StoreContextProvider>
+    </BrowserRouter>
   </StrictMode>
 );
