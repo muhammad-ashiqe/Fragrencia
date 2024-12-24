@@ -59,7 +59,6 @@ const userSignUp = async (req, res) => {
   }
 };
 
-
 //user login controller
 const userLogIn = async (req, res) => {
   try {
@@ -72,22 +71,32 @@ const userLogIn = async (req, res) => {
       return res.json({ success: false, message: "user not exist" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
-    
+
     if (isMatch) {
-      const token = createToken(user._id)
-      return res.json({success:true,token})
+      const token = createToken(user._id);
+      return res.json({ success: true, token });
     }
 
-    if (! isMatch) {
-      return res.json({success:false,message:"invalid credentials"})
+    if (!isMatch) {
+      return res.json({ success: false, message: "invalid credentials" });
     }
   } catch (error) {
-    res.json({success:false,error})
+    res.json({ success: false, error });
   }
 };
 
-
 //admin login controller
-const adminLogIn = async (req, res) => {};
+const adminLogIn = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (email === process.env.ADMIN_EMAIL && process.env.ADMIN_PASSWORD) {
+        const token = jwt.sign(email+password,process.env.JWT_SECRET)
+        return res.json({success:true,token})
+    }
+  } catch (error) {
+    return res.json({success:false,error})
+  }
+};
 
 export { userLogIn, userSignUp, adminLogIn };

@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB  from "./config/db.js";
 import connectCloudinary from "./config/cloudinary.js";
 import userRouter from "./routes/userRoutes.js";
+import productRouter from "./routes/productRoutes.js";
 
 dotenv.config();
 
@@ -21,18 +22,10 @@ connectCloudinary()
 
 //controllers
 app.use('/api/user',userRouter)
-
-//api end points
-app.get("/",(req,res)=>{
-  res.send("Api is working")
-})
-
-
+app.use('/api/product',productRouter)
 
 
 //server starting
 app.listen(PORT,(req,res)=>{
   console.log("server started at",PORT)
 })
-
-//
