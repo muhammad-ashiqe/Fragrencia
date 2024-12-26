@@ -1,18 +1,17 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StoreContext } from '../Context/StoreContext';
-import { products } from '../assets/assets';
 import TitleText from './TitleText';
 import ProductItem from './ProductItem';
 
 const BestSeller = () => {
 
-    const {prducts} = useContext(StoreContext);
+    const {products} = useContext(StoreContext);
     const [BestSeller,setBestSeller] =useState([]);
 
     useEffect(()=>{
         const bestProduct = products.filter((item)=>(item.bestseller));
         setBestSeller(bestProduct.splice(0,5))
-    },[])
+    },[products])
 
   return (
     <div className='my-10'>
@@ -26,7 +25,7 @@ const BestSeller = () => {
     <div className="flex justify-between flex-wrap ">
       {
         BestSeller.map((item,index)=>(
-          <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price}/>
+          <ProductItem key={index} id={item._id} image={item.Image} name={item.name} price={item.price}/>
         ))
       }
     </div>

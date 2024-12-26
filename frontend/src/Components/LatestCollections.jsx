@@ -11,7 +11,7 @@ const LatestCollections = () => {
 
     useEffect(()=>{
       setLatestProduct(products.slice(0,5))
-    },[])
+    },[products])
   return (
     <div className='my-10'>
       <div className="text-center py-8 text-3xl">
@@ -24,7 +24,7 @@ const LatestCollections = () => {
       <div className="flex justify-between flex-wrap ">
         {
           latestProduct.map((item,index)=>(
-            <ProductItem key={index} id={item._id} image={item.image} name={item.name} price={item.price}/>
+            <ProductItem key={index} id={item._id} image={item.Image} name={item.name} price={item.price}/>
           ))
         }
       </div>

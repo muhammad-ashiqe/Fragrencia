@@ -1,11 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import TitleText from "../Components/TitleText";
 import { StoreContext } from "../Context/StoreContext";
-import { products } from "../assets/assets";
 import ProductItem from "../Components/ProductItem";
 
 const Collection = () => {
-  const { prducts,search,showSearch} = useContext(StoreContext);
+  const { products,search,showSearch} = useContext(StoreContext);
 
   const [filteredProducts, setFilteredProducts] = useState([]);
 
@@ -90,7 +89,7 @@ const Collection = () => {
 
   useEffect(()=>{
     applyFilter()
-  },[category,subCategory,search,showSearch])
+  },[category,subCategory,search,showSearch,products])
 
 
   return (
@@ -187,7 +186,7 @@ const Collection = () => {
               <ProductItem
                 key={index}
                 id={item._id}
-                image={item.image}
+                image={item.Image}
                 name={item.name}
                 price={item.price}
               />
