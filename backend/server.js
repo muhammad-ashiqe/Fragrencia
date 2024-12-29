@@ -5,6 +5,7 @@ import connectDB  from "./config/db.js";
 import connectCloudinary from "./config/cloudinary.js";
 import userRouter from "./routes/userRoutes.js";
 import productRouter from "./routes/productRoutes.js";
+import cartRouter from "./routes/cartRoute.js";
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ connectCloudinary()
 //controllers
 app.use('/api/user',userRouter)
 app.use('/api/product',productRouter)
+app.use('/api/cart',cartRouter)
 
 
 //server starting
