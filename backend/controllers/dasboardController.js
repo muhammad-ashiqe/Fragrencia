@@ -1,109 +1,66 @@
-import Order from "../models/orderModel.js";
-import User from "../models/userModel.js";
-import Product from "../models/productModel.js";
-import mongoose from "mongoose";
+import orderModel from "../models/orderModel.js";
+import productModel from "../models/productModel.js";
+import userModel from "../models/userModel.js";
 
-// 📌 Get Dashboard Details
-export const getDashboardDetails = async (req, res) => {
+// Get Dashboard Stats
+export const getDashboardStats = async (req, res) => {
   try {
-    // 📊 Total Users (Customers)
-    const totalUsers = await User.countDocuments();
+    // Total number of orders
+    const totalOrders = await orderModel.countDocuments();
 
-    // 📦 Total Orders
-    const totalOrders = await Order.countDocuments();
-
-    // 💰 Total Revenue (Sum of all order amounts)
-    const totalRevenue = await Order.aggregate([
+    // Total revenue (sum of all order amounts)
+    const totalRevenueResult = await orderModel.aggregate([
       { $group: { _id: null, total: { $sum: "$amount" } } },
     ]);
-    const revenue = totalRevenue.length > 0 ? totalRevenue[0].total : 0;
+    const totalRevenue = totalRevenueResult[0]?.total || 0;
 
-    // 🕒 Recent Orders (Last 5 Orders)
-    const recentOrders = await Order.find()
+    // Total number of products
+    const totalProducts = await productModel.countDocuments();
+
+    // Total number of users
+    const totalUsers = await userModel.countDocuments();
+
+    // Average Order Value
+    const averageOrderValue = totalRevenue / totalOrders || 0;
+
+    // Recent orders (last 5 orders)
+    const recentOrders = await orderModel
+      .find()
       .sort({ date: -1 })
       .limit(5)
-      .populate("userId", "name email"); // Populate user details
+      .exec();
 
-    // 🔝 Most Sold Products
-    const topProducts = await Order.aggregate([
-      { $unwind: "$items" },
+    // Monthly Revenue Data (for charts)
+    const monthlyRevenue = await orderModel.aggregate([
+      {
+        $addFields: {
+          dateObject: { $toDate: "$date" }, // Convert the timestamp to a date object
+        },
+      },
       {
         $group: {
-          _id: "$items.productId",
-          totalSold: { $sum: "$items.quantity" },
+          _id: { $month: "$dateObject" }, // Extract the month from the date object
+          total: { $sum: "$amount" },
         },
       },
-      { $sort: { totalSold: -1 } },
-      { $limit: 5 },
-      {
-        $lookup: {
-          from: "products",
-          localField: "_id",
-          foreignField: "_id",
-          as: "productDetails",
-        },
-      },
-      { $unwind: "$productDetails" },
-      {
-        $project: {
-          _id: 1,
-          totalSold: 1,
-          name: "$productDetails.name",
-          price: "$productDetails.price",
-        },
-      },
+      { $sort: { _id: 1 } }, // Sort by month
     ]);
-
-    // 📈 Revenue Line Chart (Monthly Sales)
-    const monthlySales = await Order.aggregate([
-      {
-        $group: {
-          _id: { $month: { $toDate: "$date" } },
-          totalRevenue: { $sum: "$amount" },
-        },
-      },
-      { $sort: { _id: 1 } },
-    ]);
-
-    // 🥧 Total Sales Pie Chart (Sales by Category)
-    const salesByCategory = await Order.aggregate([
-      { $unwind: "$items" },
-      {
-        $lookup: {
-          from: "products",
-          localField: "items.productId",
-          foreignField: "_id",
-          as: "productInfo",
-        },
-      },
-      { $unwind: "$productInfo" },
-      {
-        $group: {
-          _id: "$productInfo.category",
-          totalSales: { $sum: "$items.quantity" },
-        },
-      },
-      { $sort: { totalSales: -1 } },
-    ]);
-
-    // 🆕 New User Registrations (Last 5 Users)
-    const newRegistrations = await User.find()
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select("name email createdAt");
 
     res.status(200).json({
-      totalUsers,
+      success: true,
       totalOrders,
-      totalRevenue: revenue,
+      totalRevenue,
+      totalProducts,
+      totalUsers,
+      averageOrderValue,
       recentOrders,
-      topProducts,
-      monthlySales,
-      salesByCategory,
-      newRegistrations,
+      monthlyRevenue,
     });
   } catch (error) {
-    console.error("Error fetching dashboard data:", error);
-    res.status(500).json({ message: "Internal Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Error fetching dashboard stats",
+      error: error.message,
+    });
   }
 };
