@@ -6,7 +6,7 @@ import axios from "axios";
 export const StoreContext = createContext();
 
 export const StoreContextProvider = (props) => {
-  const backendUrl = "http://localhost:7000";
+  const backendUrl = "https://fragrencia.onrender.com";
   const currency = "₹";
   const delivery_fee = 50.0;
   const [search, setSearch] = useState("");
