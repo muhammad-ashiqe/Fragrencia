@@ -73,96 +73,52 @@ const Collection = () => {
     applyFilter();
   }, [category, subCategory, search, showSearch, products]);
 
-  return (
-    <div>
-      <div className="flex flex-wrap md:flex-nowrap">
-        {/* Filter Section */}
-        <div className="w-full md:w-1/4 my-5 flex flex-col px-5">
-          <p className="text-[18px] text-gray-800">FILTERS</p>
+return (
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Filter Section - Mobile Collapsible */}
+        <div className="w-full lg:w-1/4">
+          <div className="bg-white p-4 shadow-sm rounded-lg lg:sticky lg:top-4">
+            <p className="text-lg font-medium text-gray-800 mb-4">FILTERS</p>
 
-          {/* Category Filter */}
-          <div className="flex flex-col border p-5 my-5 border-gray-300 gap-2">
-            <p className="text-gray-700 text-[16px]">CATEGORY</p>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"Men"}
-                onChange={toggleCategory}
-                id=""
-              />
-              <p className="text-gray-500 text-[14px]">MEN</p>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"Women"}
-                onChange={toggleCategory}
-                id=""
-              />
-              <p className="text-gray-500 text-[14px]">WOMEN</p>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"Unisex"}
-                onChange={toggleCategory}
-                id=""
-              />
-              <p className="text-gray-500 text-[14px]">UNISEX</p>
+            {/* Category Filter */}
+            <div className="space-y-3 border-b pb-4 mb-4">
+              <p className="text-sm font-semibold text-gray-700">CATEGORY</p>
+              {["Men", "Women", "Unisex"].map((cat) => (
+                <label 
+                  key={cat} 
+                  className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-2 rounded"
+                >
+                  <input
+                    type="checkbox"
+                    value={cat}
+                    onChange={toggleCategory}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <span className="text-sm text-gray-600">{cat}</span>
+                </label>
+              ))}
             </div>
           </div>
-
-          
-          {/* <div className="flex flex-col border p-5 my-5 border-gray-300 gap-2">
-            <p className="text-gray-700 text-[16px]">SCENT-NOTES</p>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"spicy"}
-                id=""
-                onChange={toggleSubCategory}
-              />
-              <p className="text-gray-500 text-[14px]">SPICY</p>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"aquatic"}
-                id=""
-                onChange={toggleSubCategory}
-              />
-              <p className="text-gray-500 text-[14px]">AQUATIC</p>
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="checkbox"
-                value={"citrus"}
-                id=""
-                onChange={toggleSubCategory}
-              />
-              <p className="text-gray-500 text-[14px]">CITRUS</p>
-            </div>
-          </div> */}
         </div>
 
         {/* Products Section */}
-        <div className="w-full md:w-3/4">
-          <div className="flex justify-between px-5">
+        <div className="w-full lg:w-3/4">
+          {/* Header with Title and Sort */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <TitleText text1={"ALL"} text2={"COLLECTIONS"} />
             <select
-              className="border text-sm cursor-pointer border-gray-400 p-2 outline-none"
-              name=""
-              id=""
+              className="w-full sm:w-48 border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               onChange={(e) => setSortType(e.target.value)}
             >
-              <option value="relevent">Most Relevent</option>
-              <option value="high-low">High to Low</option>
-              <option value="low-high">Low to High</option>
+              <option value="relevent">Most Relevant</option>
+              <option value="high-low">Price: High to Low</option>
+              <option value="low-high">Price: Low to High</option>
             </select>
           </div>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 gap-y-6 px-5">
+          {/* Centered Product Grid */}
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 justify-items-center">
             {filteredProducts.map((item, index) => (
               <ProductItem
                 key={index}
@@ -170,9 +126,17 @@ const Collection = () => {
                 image={item.Image}
                 name={item.name}
                 price={item.price}
+                className="w-full max-w-[200px]"
               />
             ))}
           </div>
+
+          {/* Empty State */}
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-12 text-gray-500">
+              No products found matching your criteria
+            </div>
+          )}
         </div>
       </div>
     </div>
